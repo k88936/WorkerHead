@@ -1,5 +1,7 @@
 from z_uart import Mars_UART
+import wifi
 import time
+
 # 二、定义全局变量
 # 1. 定义总线ID号
 car_motor_fl = 1  # 小车左前轮电机ID
@@ -21,18 +23,34 @@ car_turn_angle = 200  # 小车转弯角度，范围0~1000us 此数值是PWM输�
 car_turn_time = 2000  # 小车转弯时间，小车直行时间1000=1s
 
 # 3. 定义底盘转向舵机的初始位置PWM数值，并将测试得到数值对以下数值进行更新
-car_servo_fl_init = 1400
-car_servo_fr_init = 1600
-car_servo_bl_init = 1500
-car_servo_br_init = 1500
+car_servo_fl_init = 1580
+car_servo_fr_init = 1450
+car_servo_bl_init = 1570
+car_servo_br_init = 1460
 
-car_motor_fl_init =1500
-car_motor_fr_init =1500
-car_motor_bl_init =1500
-car_motor_br_init =1500
+car_motor_fl_init = 1500
+car_motor_fr_init = 1500
+car_motor_bl_init = 1500
+car_motor_br_init = 1500
 # 测试底盘转向舵机的初始值 在Z_uart.py程序中运行。先运行整个Z_uart.py，再在命令栏中不断测试。找到舵机对中位置时的PWM数值，在1500附近
 
-# 三、定义函数 
+# 二、定义全局变量
+# 1. 定义机械臂ID号
+arm_servo_1 = 21
+arm_servo_2 = 22
+arm_servo_3 = 23
+arm_servo_4 = 24
+
+# 2.定义机械臂舵机的初始位置PWM数值，并将测试得到数值对以下数值进行更新
+arm_servo_1_init = 1530
+arm_servo_2_init = 1500
+arm_servo_3_init = 1500
+arm_servo_4_init = 1500
+
+uart = Mars_UART()  # 实例化串口对象
+
+
+# 三、定义函数
 # 1.定义底盘舵机初始化函数，即再一次对中
 def car_servos_init():
     Srt = f'#{car_servo_fl:03d}P{car_servo_fl_init:04d}T{1000:04d}!#{car_servo_fr:03d}P{car_servo_fr_init:04d}T{1000:04d}!#{car_servo_bl:03d}P{car_servo_bl_init:04d}T{1000:04d}!#{car_servo_br:03d}P{car_servo_br_init:04d}T{1000:04d}!'
@@ -73,11 +91,38 @@ def car_stop():
     uart.uart_send_str(Srt)
 
 
-if __name__ == "__main__":
+# 三、定义函数
+# 1. 定义底盘舵机初始化函数，即再一次对中
+def arm_servos_init():
+    Srt = f'#{arm_servo_1:03d}P{arm_servo_1_init:04d}T{1000:04d}!#{arm_servo_2:03d}P{arm_servo_2_init:04d}T{1000:04d}!#{arm_servo_3:03d}P{arm_servo_3_init:04d}T{1000:04d}!#{arm_servo_4:03d}P{arm_servo_4_init:04d}T{1000:04d}!'
+    print(Srt)
+    print("Arm servos are tunning")
+    uart.uart_send_str(Srt)
+
+
+# 2. 定义机械臂运动——任何1个关节运动，需要传递arm_id,arm_ang,move_time-ID号、角度和时间
+def arm_move_1(arm_id, arm_ang, move_time):
+    armSrt = f'#{arm_id:03d}P{arm_ang:04d}T{move_time:04d}!'
+    print(armSrt)
+    print(arm_id, "is running")
+    uart.uart_send_str(armSrt)
+
+
+# 4定义机械臂运动——4个关节的运动， 需要传递arm_ang1,arm_ang2,arm_ang3,arm_ang4,move_time
+def arm_move_4(arm_ang1, arm_ang2, arm_ang3, arm_ang4, move_time):
+    armSrt = f'#{arm_servo_1:03d}P{arm_ang1:04d}T{move_time:04d}!#{arm_servo_2:03d}P{arm_ang2:04d}T{move_time:04d}!#{arm_servo_3:03d}P{arm_ang3:04d}T{move_time:04d}!#{arm_servo_4:03d}P{arm_ang4:04d}T{move_time:04d}!'
+    print(armSrt)
+    print("Arm is running")
+    uart.uart_send_str(armSrt)
+
+
+def main():
+    # wifi.connect_wifi()
     #     global uart,car_run_speed,car_run_time,car_turn_angle,car_turn_time
-    uart = Mars_UART()  # 实例化串口对象
+
 
     # 先对底盘舵机初始值-程序对中
+
     car_servos_init()
 
     car_stop()
@@ -86,7 +131,7 @@ if __name__ == "__main__":
     # 小车前进运动
     car_run(car_run_speed, car_run_time)  # 前进
     time.sleep(2)
-
+    #
     car_stop()
     time.sleep(2)
 
@@ -122,4 +167,55 @@ if __name__ == "__main__":
     time.sleep(2)
 
     car_stop()
+    time.sleep(2)
+    # 先对机械臂舵机初始值-程序对中
+
+    arm_servos_init()
+
+    # 单个关节测试
+    # 机械臂1号舵机先转到2000，再转到1000，最后回到初始位置
+    arm_move_1(arm_servo_1, 2000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_1, 1000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_1, arm_servo_1_init, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    # 机械臂2号舵机先转到2000，再转到1000，最后回到初始位置
+    arm_move_1(arm_servo_2, 2000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_2, 1000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_2, arm_servo_2_init, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    # 机械臂3号舵机先转到2000，再转到1000，最后回到初始位置
+    arm_move_1(arm_servo_3, 2000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_3, 1000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_3, arm_servo_3_init, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    # 机械臂4号舵机先转到2000，再转到1000，最后回到初始位置
+    arm_move_1(arm_servo_4, 2000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_4, 1000, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    arm_move_1(arm_servo_4, arm_servo_4_init, 1000)  # 机械臂1号舵机运动
+    time.sleep(2)
+
+    # 机械臂的4个舵机同时调试
+    # 1234关节
+    arm_move_4(1800, 1800, 1900, 1900, 1000)
+    time.sleep(2)
+    arm_move_4(1300, 1400, 1600, 1200, 1000)
     time.sleep(2)
