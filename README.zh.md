@@ -34,7 +34,7 @@ bash
 # 上传已修改的文件
 python upload.py
 
-# 上传所有文件
+# 强制同步所有文件（会先清空再上传）
 python upload.py --all
 ```
 ### 2. monit.py - 串口监控工具
@@ -44,9 +44,11 @@ python upload.py --all
 ```
 bash
 python monit.py
+# 使用ctrl + d退出
+# 可以在python解释器里直接输入main()来重新运行
 ```
 ### 3. reload.py - 热重载工具
-组合工具，自动上传变更文件并启动监控.
+组合工具，自动上传变更文件并启动监控.（目前不会自动重启，仍需要手动main（）或者动手reset）
 
 **使用方法：**
 ```
@@ -59,7 +61,7 @@ python reload.py
 
 ```env
 DEVICE=/dev/ttyUSBx (on Win: COMx)    # 设备路径
-BAUD=115200            # 波特率
+BAUD=115200                           # 波特率
 ```
 
 
