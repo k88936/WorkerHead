@@ -26,7 +26,7 @@ python reload.py
 ## 工具介绍
 
 ### 1. upload.py - 文件上传工具
-上传工具，用于将本地 Python 文件同步到 MicroPython 设备。
+上传工具，用于将本地 Python 文件同步到 MicroPython 设备。（会自动重启）
 
 **使用方法：**
 ```
@@ -48,7 +48,7 @@ python monit.py
 # 可以在python解释器里直接输入main()来重新运行
 ```
 ### 3. reload.py - 热重载工具
-组合工具，自动上传变更文件并启动监控.（目前不会自动重启，仍需要手动main（）或者动手reset）
+组合工具，自动上传变更文件并启动监控.（会自动重启）
 
 **使用方法：**
 ```

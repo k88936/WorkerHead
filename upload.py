@@ -124,6 +124,7 @@ def upload_changed_files(src_dir="./src", all_files=False):
 
         # Exit raw REPL mode
         pyb.exit_raw_repl()
+        pyb.serial.write(b"\x04")  # ctrl-D: soft reset
         pyb.close()
 
     except Exception as e:
