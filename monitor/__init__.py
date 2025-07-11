@@ -1,1 +1,0 @@
-from monitor.monitor import SerialMonitor

@@ -37,15 +37,34 @@ python upload.py
 # 强制同步所有文件（会先清空再上传）
 python upload.py --all
 ```
-### 2. monit.py - 串口监控工具
-实时监控 MicroPython 设备的串口输出，便于调试和查看程序运行状态。
+### 2. monitor.py - 串口监控工具
+实时监控 MicroPython 设备的串口输出，便于调试和查看程序运行状态。支持命令交互、自动重连和RAW REPL模式。
 
 **使用方法：**
+```bash
+# 基础用法
+python monitor.py
+
+# 禁用时间戳显示
+python monitor.py --no-timestamps
+
+# 禁用自动重连
+python monitor.py --no-reconnect
+
+# 以RAW REPL模式启动
+python monitor.py --raw-repl
 ```
-bash
-python monit.py
-# 使用ctrl + d退出
-# 可以在python解释器里直接输入main()来重新运行
+
+**内置命令：**
+```
+help        - 显示帮助信息
+stats       - 显示连接统计信息
+reconnect   - 重新连接设备
+raw         - 切换RAW REPL模式
+reset       - 发送软重置 (Ctrl+D)
+exit/quit   - 退出监控
+
+# 使用Ctrl+C退出
 ```
 ### 3. reload.py - 热重载工具
 组合工具，自动上传变更文件并启动监控.（会自动重启）
@@ -73,7 +92,7 @@ BAUD=115200                           # 波特率
 ├── .uploaded/       # 上传文件哈希缓存
 ├── .env             # 环境变量配置
 ├── upload.py        # 文件上传工具
-├── monit.py         # 串口监控工具
+├── monitor.py       # 串口监控工具
 └── reload.py        # 热重载工具
 ```
 

@@ -32,5 +32,3 @@ def connect_wifi():
         print('Network config:', wlan.ifconfig())
     else:
         print('Failed to connect.')
-
-connect_wifi()

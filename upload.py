@@ -75,7 +75,6 @@ def upload_file(pyb, src_path, dest_path):
 def upload_changed_files(src_dir="./src", all_files=False):
     """Upload changed files from src_dir to pyboard"""
     try:
-        dotenv.load_dotenv()
         DEVICE = os.environ.get("DEVICE")
         # Connect to the pyboard
         print(Fore.GREEN + Style.BRIGHT + f"Connecting to pyboard at {DEVICE}...")
